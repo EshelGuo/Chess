@@ -1,5 +1,9 @@
 package com.eshel.chess.chess.game;
 
+import static com.eshel.chess.chess.game.Location.MAX_X;
+import static com.eshel.chess.chess.game.Location.MAX_Y;
+import static com.eshel.chess.chess.game.Location.MIN_Y;
+
 /**
  * createBy Eshel
  * createTime: 2018/8/25 10:52
@@ -48,5 +52,12 @@ public class Pieces {
 		pieces.isSelected = isSelected;
 		pieces.resId = resId;
 		return pieces;
+	}
+
+	public boolean notExist(){
+		if (x < Location.MIN_X || x > MAX_X || y < MIN_Y || y > MAX_Y) {
+			return true;
+		}
+		return false;
 	}
 }

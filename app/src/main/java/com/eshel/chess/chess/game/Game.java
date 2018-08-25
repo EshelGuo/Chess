@@ -9,7 +9,8 @@ import java.util.List;
  * createTime: 2018/8/25 12:47
  * desc: TODO
  */
-public class Game {
+public class Game implements LoopHandler<Canvas> {
+	ChessView mChessView;
 	private Rule mRule;
 	private List<Pieces> mAllPiecess;
 	private Pieces emptySel;
@@ -124,5 +125,28 @@ public class Game {
 
 	public Pieces getMoveEmpty(){
 		return emptySel;
+	}
+
+	public void reSetStyle(){
+		emptySel.resetStyle();
+		emptySel1.resetStyle();
+		emptySel2.resetStyle();
+		loopAllPiecess(null,this);
+	}
+
+	public Game newGame(){
+		Game game = new Game(new Rule.Builder()
+				.setCamp(Color.RED)
+				.canMoveAllColor(mRule.canMoveAllColor())
+				.setStyle(Style.getDefaultStyle())
+				.build());
+		mChessView.reStart(game);
+		mChessView.invalidate();
+		return game;
+	}
+
+	@Override
+	public void loop(Pieces pieces, Canvas canvas) {
+		pieces.resetStyle();
 	}
 }

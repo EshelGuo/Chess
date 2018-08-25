@@ -46,10 +46,6 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 
 	public ChessView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		height = width = Util.getScreenWidth();
-		mLocation = new Location(width);
-		height = mLocation.getHeight();
-		width = mLocation.getWidth();
 		initAll();
 		setClickable(true);
 	}
@@ -58,10 +54,34 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.BLACK);
+
+		height = width = Util.getScreenWidth();
+		mLocation = new Location(width);
+		height = mLocation.getHeight();
+		width = mLocation.getWidth();
 	}
 	private Game game;
 	public void bindToGame(Game game){
 		this.game = game;
+		game.mChessView = this;
+	}
+
+	/**
+	 * 开始新游戏
+	 * @param game
+	 */
+	public void reStart(Game game){
+		initAll();
+
+		mLastPoint = new Point();
+		mCurrentPoint = new Point();
+		mMovePoint = new Point();
+		animIsShowing = false;
+		va = null;
+		current = null;
+		last = null;
+
+		bindToGame(game);
 	}
 
 	int width,height;

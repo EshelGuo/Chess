@@ -6,8 +6,26 @@
 
     <com.eshel.chess.chess.game.ChessView
         android:id="@+id/chess"
-        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+    <Button
+        android:id="@+id/btn1"
+        android:layout_gravity="left"
+        android:text="更换棋子样式"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
+    <Button
+        android:id="@+id/btn2"
+        android:layout_gravity="right"
+        android:text="更换棋盘样式"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/newGame"
+        android:layout_gravity="bottom|left"
+        android:text="NewGame"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </FrameLayout>

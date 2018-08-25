@@ -15,10 +15,10 @@ public class Location {
 	private final int HEIGHT = 417;
 	private final int SIZE = 40;
 
-	private static final int MIN_X = 1;
-	private static final int MIN_Y = 1;
-	private static final int MAX_X = 9;
-	private static final int MAX_Y = 10;
+	public static final int MIN_X = 1;
+	public static final int MIN_Y = 1;
+	public static final int MAX_X = 9;
+	public static final int MAX_Y = 10;
 
 	private int size;
 	private int boundary;
@@ -133,7 +133,7 @@ public class Location {
 
 	private void checkXY(int x, int y) {
 		if (x < MIN_X || x > MAX_X || y < MIN_Y || y > MAX_Y) {
-			throw new ChessException("棋子位置错误");
+			throw new ChessException("棋子位置错误: x-"+x+" y-"+y);
 		}
 	}
 

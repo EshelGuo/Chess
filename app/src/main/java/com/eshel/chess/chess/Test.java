@@ -10,12 +10,17 @@ import java.io.File;
 public class Test {
 
 	public static void main(String args[]){
-		String path = "C:\\Users\\Administrator\\Desktop\\象棋编程素材\\IMAGES_S";
+		String path = "G:\\Project\\Android\\StudioProject\\Chess\\app\\src\\main\\res\\mipmap-hdpi";
 		File assets = new File(path);
 		for (File parent : assets.listFiles()) {
 			String name = parent.getName();
-			if(!parent.isFile()){
-				System.out.println(name);
+			if(parent.isFile() && !name.contains("ic_launcher")){
+				if(name.endsWith(".jif")){
+					String newName = name.replace(".jif", ".png");
+					boolean success = parent.renameTo(new File(assets, newName));
+					if(success)
+						parent.delete();
+				}
 			}
 		}
 	}

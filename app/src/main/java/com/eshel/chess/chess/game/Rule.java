@@ -61,6 +61,10 @@ public class Rule {
 	public boolean canMove(Pieces src, Pieces dest){
 
 		if(src != null && dest != null){
+
+			if(src.notExist() || dest.notExist())
+				return false;
+
 			//点击空位不可移动
 			if(src.type == null)
 				return false;
