@@ -1,5 +1,7 @@
 package com.eshel.chess.chess.game;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 
 import java.util.List;
@@ -132,6 +134,49 @@ public class Game implements LoopHandler<Canvas> {
 		emptySel1.resetStyle();
 		emptySel2.resetStyle();
 		loopAllPiecess(null,this);
+	}
+
+	/**
+	 * 获胜方
+	 * @return
+	 */
+	public Color checkGameOver(){
+		try{
+			int count = 0;//将的数量
+			Type type = null;
+			for (Pieces pieces : mAllPiecess) {
+				if(pieces.type == Type.RED_SHUAI) {
+					count++;
+					type = pieces.type;
+				}
+				if(pieces.type == Type.BLACK_JIANG){
+					count++;
+					type = pieces.type;
+				}
+			}
+			if(count == 1){
+				mChessView.gameOver();
+				return type.color;
+			}
+		} catch (Exception e){
+		    e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 获胜方
+	 * @param color
+	 */
+	public void showGameOverDialog(Color color){
+		new AlertDialog.Builder(mChessView.getContext())
+				.setTitle((color==Color.RED?"红":"黑")+"方胜!!!")
+				.setNegativeButton("再来一局", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						mChessView.reStart(newGame());
+					}
+				}).setPositiveButton("取消",null).show();
 	}
 
 	public Game newGame(){

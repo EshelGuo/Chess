@@ -33,6 +33,8 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 	private Paint paint;
 	private Location mLocation;
 
+	private boolean gameOver;
+
 	private Pieces current;
 	private Pieces last;
 
@@ -48,6 +50,10 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		super(context, attrs, defStyleAttr);
 		initAll();
 		setClickable(true);
+	}
+
+	public void gameOver(){
+		gameOver = true;
 	}
 
 	private void initAll() {
@@ -66,13 +72,17 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		game.mChessView = this;
 	}
 
+	public Game getGame() {
+		return game;
+	}
+
 	/**
 	 * 开始新游戏
 	 * @param game
 	 */
 	public void reStart(Game game){
 		initAll();
-
+		gameOver = false;
 		mLastPoint = new Point();
 		mCurrentPoint = new Point();
 		mMovePoint = new Point();
@@ -149,6 +159,8 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if(gameOver)
+			return false;
 		if(animIsShowing)
 			return false;
 		float x = event.getX();
@@ -255,6 +267,9 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 					game.removePieces(current);
 					current = null;
 					invalidate();
+					com.eshel.chess.chess.game.Color color = game.checkGameOver();
+					if(color != null)
+						game.showGameOverDialog(color);
 					animIsShowing = false;
 					game.switchCamp();
 				}
