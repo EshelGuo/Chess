@@ -96,7 +96,14 @@ public class Game implements LoopHandler<Canvas> {
 	public void switchCamp(){
 		if(mRule.canMoveAllColor()){
 			mRule.setCurrentCamp(mRule.getCurrentCamp().switchColor());
-		}
+		}/*else {
+			Color currentCamp = mRule.getCurrentCamp();
+			if(currentCamp == null) {
+				mRule.setCurrentCamp(mRule.getSelfCamp());
+			}else {
+				mRule.setCurrentCamp(null);
+			}
+		}*/
 	}
 
 	public void switchY(){
@@ -181,8 +188,9 @@ public class Game implements LoopHandler<Canvas> {
 
 	public Game newGame(){
 		Game game = new Game(new Rule.Builder()
-				.setCamp(Color.RED)
+				.setCamp(mRule.getSelfCamp())
 				.canMoveAllColor(mRule.canMoveAllColor())
+				.canMoveOtherColor(mRule.canMoveOtherColor())
 				.setStyle(Style.getDefaultStyle())
 				.build());
 		mChessView.reStart(game);

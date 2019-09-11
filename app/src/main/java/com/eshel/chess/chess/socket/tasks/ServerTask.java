@@ -78,6 +78,7 @@ public class ServerTask extends Task {
 			bw.newLine();
 			bw.flush();
 			mView.initRoomName(name);
+			mView.initGame(true);
 		}
 	}
 }

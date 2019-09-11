@@ -58,6 +58,7 @@ public class GameTask extends Task{
 
 			String name = br.readLine();
 			mView.initRoomName(name);
+			mView.initGame(false);
 //			os.close();
 //			bw.close();
 		} catch (Exception e) {
@@ -69,5 +70,6 @@ public class GameTask extends Task{
 		void connectionFailed(String msg);
 		void initRoomName(String name);
 		void initServerIP(String ip);
+		void initGame(boolean first);
 	}
 }

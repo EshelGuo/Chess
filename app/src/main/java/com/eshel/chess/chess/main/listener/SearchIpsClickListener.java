@@ -38,7 +38,7 @@ public class SearchIpsClickListener implements View.OnClickListener {
 	public void onClick(final View v) {
 		mContext = v.getContext();
 		final EditText editText = new EditText(mContext);
-		editText.setText("192.168.");
+		editText.setText("192.168.4.191");
 		new AlertDialog.Builder(mContext)
 				.setTitle("请输入对方IP地址")
 				.setView(editText)

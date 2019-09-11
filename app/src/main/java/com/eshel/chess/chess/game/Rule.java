@@ -28,6 +28,20 @@ public class Rule {
 	 */
 	private boolean canMoveAllColor;
 
+	/**
+	 * 能否移动对手的阵营
+	 */
+	private boolean canMoveOtherColor = true;
+
+	public Rule canMoveOtherColor(boolean canMoveOtherColor) {
+		this.canMoveOtherColor = canMoveOtherColor;
+		return this;
+	}
+
+	public boolean canMoveOtherColor() {
+		return canMoveOtherColor;
+	}
+
 	public boolean canMoveAllColor() {
 		return canMoveAllColor;
 	}
@@ -48,11 +62,17 @@ public class Rule {
 
 	Game mGame;
 
+	@SuppressWarnings("ALL")
 	public boolean canSelect(Pieces pieces){
-		if(pieces != null && pieces.type != null){
-			if(pieces.type.color == currentCamp)
-				return true;
+		if(pieces == null || pieces.type == null)
+			return false;
+		//局域网对战不能选中对方棋子
+		if((!canMoveOtherColor) && pieces.type.color != selfCamp){
+			return false;
 		}
+		//非的己方回合不能选中
+		if(pieces.type.color == currentCamp)
+			return true;
 		return false;
 	}
 
@@ -283,6 +303,11 @@ public class Rule {
 
 		public Builder canMoveAllColor(boolean canMoveAllColor){
 			getRule().canMoveAllColor = canMoveAllColor;
+			return this;
+		}
+
+		public Builder canMoveOtherColor(boolean canMoveOtherColor){
+			getRule().canMoveOtherColor = canMoveOtherColor;
 			return this;
 		}
 

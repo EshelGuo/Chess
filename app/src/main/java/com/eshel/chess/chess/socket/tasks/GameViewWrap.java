@@ -44,4 +44,14 @@ public class GameViewWrap extends Task implements GameTask.GameView{
 			}
 		});
 	}
+
+	@Override
+	public void initGame(final boolean first) {
+		runOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				mGameView.initGame(first);
+			}
+		});
+	}
 }

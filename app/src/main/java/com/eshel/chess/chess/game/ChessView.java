@@ -205,9 +205,10 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 							last = null;
 							current = null;
 						}else {
-							if (game.getRule().canMove(last, current))
+							if (game.getRule().canMove(last, current)) {
 								moveLastToCurrent();
-							else {
+								// todo 网络对战要将位移发送给服务器或给客户端
+							} else {
 								if (game.isEmpty(current)) {
 									current.setSelect(false);
 									last.setSelect(false);

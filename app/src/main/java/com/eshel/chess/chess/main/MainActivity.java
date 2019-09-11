@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements GameTask.GameView
 				.build();
 		game = new Game(rule);
 		mChessView.bindToGame(game);
-		mChessView.setVisibility(View.INVISIBLE);
+//		mChessView.setVisibility(View.INVISIBLE);
 	}
 
 	@Override
@@ -103,6 +103,19 @@ public class MainActivity extends AppCompatActivity implements GameTask.GameView
 	@Override
 	public void initServerIP(String ip) {
 		mTvIp.setText(String.format("游戏创建成功: %s", ip));
+	}
+
+	@Override
+	public void initGame(boolean first) {
+		Rule rule = new Rule.Builder()
+				.setCamp(first ? Color.RED : Color.BLACK)
+				.canMoveAllColor(true)
+				.canMoveOtherColor(false)
+				.setStyle(new Style(Style.STYLE_GREEN, Style.STYLE_XQSTUDIO))
+				.build();
+		game = new Game(rule);
+		mChessView.bindToGame(game);
+		game.newGame();
 	}
 
 	private class NewGameListener implements View.OnClickListener {
