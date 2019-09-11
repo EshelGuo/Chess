@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.eshel.chess.chess">
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -13,7 +13,7 @@
         <activity
             android:theme="@style/FullscreenTheme"
             android:screenOrientation="portrait"
-            android:name=".MainActivity">
+            android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

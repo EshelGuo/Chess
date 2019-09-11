@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="All"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,24 +10,83 @@
         android:id="@+id/chess"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-    <Button
-        android:id="@+id/btn1"
-        android:layout_gravity="left"
-        android:text="更换棋子样式"
+        android:layout_centerInParent="true"/>
+    <FrameLayout
+        android:id="@+id/top_panel"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_change_pieces_style"
+            android:layout_gravity="left"
+            android:text="更换棋子样式"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_change_chessboard_style"
+            android:layout_gravity="right"
+            android:text="更换棋盘样式"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn5"
+            android:layout_gravity="top|center_horizontal"
+            android:text="发送消息"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/bottom_panel"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/newGame"
+            android:layout_gravity="bottom|left"
+            android:text="NewGame"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_create_server"
+            android:layout_gravity="bottom|center_horizontal"
+            android:text="创建连接"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_connection_server"
+            android:layout_gravity="bottom|right"
+            android:text="加入连接"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+    <TextView
+        android:id="@+id/tv_ip"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/bottom_panel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/btn2"
-        android:layout_gravity="right"
-        android:text="更换棋盘样式"
+
+    <LinearLayout
+        android:id="@+id/top_panel_2"
+        android:layout_below="@id/top_panel"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_search_ips"
+            android:text="搜索IP地址"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_room_name"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/top_panel_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/newGame"
-        android:layout_gravity="bottom|left"
-        android:text="NewGame"
-        android:textAllCaps="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-</FrameLayout>
+</RelativeLayout>
