@@ -1,5 +1,6 @@
 package com.eshel.chess.chess.socket.tasks;
 
+import com.eshel.chess.chess.socket.WaitMoveCallback;
 import com.eshel.chess.chess.utils.Task;
 
 /**
@@ -51,6 +52,26 @@ public class GameViewWrap extends Task implements GameTask.GameView{
 			@Override
 			public void run() {
 				mGameView.initGame(first);
+			}
+		});
+	}
+
+	@Override
+	public void waitMove(final WaitMoveCallback callback) {
+		runOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				mGameView.waitMove(callback);
+			}
+		});
+	}
+
+	@Override
+	public void movePieces(final int fromX, final int fromY, final int toX, final int toY) {
+		runOnUIThread(new Runnable() {
+			@Override
+			public void run() {
+				mGameView.movePieces(fromX, fromY, toX, toY);
 			}
 		});
 	}

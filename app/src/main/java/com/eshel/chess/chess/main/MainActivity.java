@@ -11,6 +11,7 @@ import com.eshel.chess.chess.R;
 import com.eshel.chess.chess.game.ChessView;
 import com.eshel.chess.chess.game.Color;
 import com.eshel.chess.chess.game.Game;
+import com.eshel.chess.chess.game.Pieces;
 import com.eshel.chess.chess.game.Rule;
 import com.eshel.chess.chess.game.Style;
 import com.eshel.chess.chess.main.listener.ChangeChessboardStyleListener;
@@ -18,12 +19,12 @@ import com.eshel.chess.chess.main.listener.ChangePiecesStyleListener;
 import com.eshel.chess.chess.main.listener.ConnectionServerListener;
 import com.eshel.chess.chess.main.listener.CreateServerListener;
 import com.eshel.chess.chess.main.listener.SearchIpsClickListener;
+import com.eshel.chess.chess.socket.WaitMoveCallback;
 import com.eshel.chess.chess.socket.tasks.ClientTask;
 import com.eshel.chess.chess.socket.tasks.GameTask;
 
 @SuppressWarnings("ALL")
 public class MainActivity extends AppCompatActivity implements GameTask.GameView {
-	Game game;
 	private ChessView mChessView;
 
 	private String[] piecesStyles = new String[]{"STYLE_DELICATE", "STYLE_POLISH", "STYLE_MRSJ", "STYLE_MOVESKY", "STYLE_WOOD", "STYLE_XQSTUDIO", "STYLE_ZMBL"};
@@ -52,8 +53,8 @@ public class MainActivity extends AppCompatActivity implements GameTask.GameView
 	}
 
 	private void initEvent() {
-		mBtnChangePiecesStyle.setOnClickListener(new ChangePiecesStyleListener(piecesStyles, game, mChessView));
-		mBtnChangeChessboardStyle.setOnClickListener(new ChangeChessboardStyleListener(Checkerboard, game, mChessView));
+		mBtnChangePiecesStyle.setOnClickListener(new ChangePiecesStyleListener(piecesStyles, mChessView.getGame(), mChessView));
+		mBtnChangeChessboardStyle.setOnClickListener(new ChangeChessboardStyleListener(Checkerboard, mChessView.getGame(), mChessView));
 		mNewGame.setOnClickListener(new NewGameListener());
 		mBtnSearchIps.setOnClickListener(new SearchIpsClickListener(this));
 		mBtnCreateServer.setOnClickListener(new CreateServerListener(this));
@@ -85,8 +86,7 @@ public class MainActivity extends AppCompatActivity implements GameTask.GameView
 				.canMoveAllColor(true)
 				.setStyle(new Style(Style.STYLE_GREEN, Style.STYLE_XQSTUDIO))
 				.build();
-		game = new Game(rule);
-		mChessView.bindToGame(game);
+		mChessView.bindToGame(new Game(rule));
 //		mChessView.setVisibility(View.INVISIBLE);
 	}
 
@@ -113,16 +113,32 @@ public class MainActivity extends AppCompatActivity implements GameTask.GameView
 				.canMoveOtherColor(false)
 				.setStyle(new Style(Style.STYLE_GREEN, Style.STYLE_XQSTUDIO))
 				.build();
-		game = new Game(rule);
-		mChessView.bindToGame(game);
-		game.newGame();
+		mChessView.bindToGame(new Game(rule));
+		mChessView.getGame().newGame();
+	}
+
+	@Override
+	public void waitMove(WaitMoveCallback callback) {
+		mChessView.moveCallback(callback);
+	}
+
+	@Override
+	public void movePieces(int fromX, int fromY, int toX, int toY) {
+		fromX = 10 - fromX;
+		fromY = 11 - fromY;
+
+		toX = 10 - toX;
+		toY = 11 - toY;
+
+		Pieces pieces = mChessView.getGame().queryPiecesByXY(fromX, fromY);
+		mChessView.movePieces(pieces, toX, toY);
 	}
 
 	private class NewGameListener implements View.OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			game = game.newGame();
+			mChessView.getGame().newGame();
 		}
 	}
 }

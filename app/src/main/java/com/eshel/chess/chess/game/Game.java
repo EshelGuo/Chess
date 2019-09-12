@@ -36,17 +36,16 @@ public class Game implements LoopHandler<Canvas> {
 	}
 
 	public void loopAllPiecess(Canvas canvas, LoopHandler<Canvas> loopHandler){
+		if(loopHandler == null)
+			return;
 		if(mAllPiecess != null){
 			for (Pieces piecess : mAllPiecess) {
-				if(loopHandler != null)
-					loopHandler.loop(piecess,canvas);
+				loopHandler.loop(piecess,canvas);
 			}
 		}
-		if(loopHandler != null){
-			loopHandler.loop(emptySel, canvas);
-			loopHandler.loop(emptySel1, canvas);
-			loopHandler.loop(emptySel2, canvas);
-		}
+		loopHandler.loop(emptySel, canvas);
+		loopHandler.loop(emptySel1, canvas);
+		loopHandler.loop(emptySel2, canvas);
 	}
 
 	public Pieces queryByXY(int x, int y){

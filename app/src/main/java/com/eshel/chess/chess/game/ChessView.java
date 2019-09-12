@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import com.eshel.chess.chess.Util;
+import com.eshel.chess.chess.socket.WaitMoveCallback;
 
 /**
  * createBy Eshel
@@ -26,6 +27,8 @@ import com.eshel.chess.chess.Util;
  * desc: 中国象棋棋盘
  */
 public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimator.AnimatorUpdateListener {
+
+	private WaitMoveCallback moveCallback;
 
 	private Bitmap checkerboard;
 	private Rect cbSrc;
@@ -39,11 +42,11 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 	private Pieces last;
 
 	public ChessView(Context context) {
-		this(context,null);
+		this(context, null);
 	}
 
 	public ChessView(Context context, @Nullable AttributeSet attrs) {
-		this(context,attrs,0);
+		this(context, attrs, 0);
 	}
 
 	public ChessView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -52,7 +55,7 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		setClickable(true);
 	}
 
-	public void gameOver(){
+	public void gameOver() {
 		gameOver = true;
 	}
 
@@ -66,8 +69,10 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		height = mLocation.getHeight();
 		width = mLocation.getWidth();
 	}
+
 	private Game game;
-	public void bindToGame(Game game){
+
+	public void bindToGame(Game game) {
 		this.game = game;
 		game.mChessView = this;
 	}
@@ -76,11 +81,17 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		return game;
 	}
 
+	public ChessView moveCallback(WaitMoveCallback moveCallback) {
+		this.moveCallback = moveCallback;
+		return this;
+	}
+
 	/**
 	 * 开始新游戏
+	 *
 	 * @param game
 	 */
-	public void reStart(Game game){
+	public void reStart(Game game) {
 		initAll();
 		gameOver = false;
 		mLastPoint = new Point();
@@ -94,10 +105,11 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		bindToGame(game);
 	}
 
-	int width,height;
+	int width, height;
+
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec,heightMeasureSpec);
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		setMeasuredDimension(width, height);
 	}
 
@@ -112,42 +124,43 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 	}
 
 	private void drawAnim(Pieces last, Canvas canvas) {
-		if(last != null)
+		if (last != null)
 			loop(last, canvas);
 	}
 
 	private void drawGame(Canvas canvas) {
-		if(game != null){
-			game.loopAllPiecess(canvas,this);
+		if (game != null) {
+			game.loopAllPiecess(canvas, this);
 		}
 	}
 
 	private void drawCheckerboard(Canvas canvas) {
-		canvas.drawBitmap(checkerboard,cbSrc,cbDest,paint);
+		canvas.drawBitmap(checkerboard, cbSrc, cbDest, paint);
 	}
 
 	private int checkerboardRes;
-	private void initCheckerboard(){
+
+	private void initCheckerboard() {
 		int checkerboardRes = Style.getCheckerboardResByStyle();
-		if(this.checkerboardRes == checkerboardRes)
+		if (this.checkerboardRes == checkerboardRes)
 			return;
 
 		this.checkerboardRes = checkerboardRes;
 		checkerboard = BitmapFactory.decodeResource(getResources(), checkerboardRes);
 
-		cbSrc = new Rect(0,0,checkerboard.getWidth(),checkerboard.getHeight());
-		cbDest = new Rect(0,0,width,height);
+		cbSrc = new Rect(0, 0, checkerboard.getWidth(), checkerboard.getHeight());
+		cbDest = new Rect(0, 0, width, height);
 	}
 
 	@Override
 	public void loop(Pieces pieces, Canvas canvas) {
-		if(pieces == game.getCurrentEmpty() && pieces.x != -1 && pieces.y != -1){
-			Log.d("","");
+		if (pieces == game.getCurrentEmpty() && pieces.x != -1 && pieces.y != -1) {
+			Log.d("", "");
 		}
 		Bitmap bitmap = ResCache.getBitmap(getContext(), pieces.resId);
 		Rect rect = mLocation.getPiecesL(pieces);
-		if(rect != null) {
-			if(mMovePoint.x != 0 && mMovePoint.y != 0 && last == pieces){
+		if (rect != null) {
+			if (mMovePoint.x != 0 && mMovePoint.y != 0 && last == pieces) {
 				rect.left = mMovePoint.x;
 				rect.top = mMovePoint.y;
 				rect.right = rect.left + mLocation.getSize();
@@ -159,17 +172,19 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if(gameOver)
+		if (gameOver)
 			return false;
-		if(animIsShowing)
+		if (animIsShowing)
+			return false;
+		if(autoMoving)
 			return false;
 		float x = event.getX();
 		float y = event.getY();
 		Point unLocation = mLocation.getUnLocation(x, y);
 		Pieces pieces = game.queryByXY(unLocation.x, unLocation.y);
-		switch (event.getAction()){
+		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-				if(pieces != null) {
+				if (pieces != null) {
 					current = pieces;
 					current.setSelect(true);
 				} else
@@ -177,10 +192,10 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 				invalidate();
 				break;
 			case MotionEvent.ACTION_MOVE:
-				if(current != null && current == pieces){
+				if (current != null && current == pieces) {
 					return true;
-				}else {
-					if(current != null) {
+				} else {
+					if (current != null) {
 						current.setSelect(false);
 						current = null;
 					}
@@ -188,9 +203,9 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 					return false;
 				}
 			case MotionEvent.ACTION_UP:
-				if(current == null)
+				if (current == null)
 					return false;
-				if(last == null) {
+				if (last == null) {
 					if (!game.getRule().canSelect(current)) {
 						current.setSelect(false);
 						current = null;
@@ -200,14 +215,16 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 					}
 				} else {
 					if (current != null) {
-						if(last == current){
+						if (last == current) {
 							current.setSelect(false);
 							last = null;
 							current = null;
-						}else {
+						} else {
 							if (game.getRule().canMove(last, current)) {
+								if (moveCallback != null) {
+									moveCallback.move(last.x, last.y, current.x, current.y);
+								}
 								moveLastToCurrent();
-								// todo 网络对战要将位移发送给服务器或给客户端
 							} else {
 								if (game.isEmpty(current)) {
 									current.setSelect(false);
@@ -216,9 +233,9 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 									current = null;
 								} else {
 									last.setSelect(false);
-									if(!game.getRule().canSelect(current)) {
+									if (!game.getRule().canSelect(current)) {
 										current.setSelect(false);
-									}else {
+									} else {
 										last = current;
 									}
 									current = null;
@@ -236,6 +253,7 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 	Point mLastPoint = new Point();
 	Point mCurrentPoint = new Point();
 	Point mMovePoint = new Point();
+
 	private void moveLastToCurrent() {
 		mLocation.getLocaton(mLastPoint, last.x, last.y);
 		mLocation.getLocaton(mCurrentPoint, current.x, current.y);
@@ -248,9 +266,11 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 
 	ValueAnimator va;
 	boolean animIsShowing;
-	private void startAnim(){
+	boolean autoMoving;
+
+	private void startAnim() {
 		animIsShowing = true;
-		if(va == null) {
+		if (va == null) {
 			va = ValueAnimator.ofFloat(0, 1);
 			va.setDuration(300);
 			va.addUpdateListener(this);
@@ -269,7 +289,7 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 					current = null;
 					invalidate();
 					com.eshel.chess.chess.game.Color color = game.checkGameOver();
-					if(color != null)
+					if (color != null)
 						game.showGameOverDialog(color);
 					animIsShowing = false;
 					game.switchCamp();
@@ -287,4 +307,29 @@ public class ChessView extends View implements LoopHandler<Canvas>, ValueAnimato
 		invalidate();
 	}
 
+	public void movePieces(Pieces pieces, int toX, int toY) {
+		Log.d("GameTask", "movePieces() called with: pieces = [" + pieces + "], toX = [" + toX + "], toY = [" + toY + "]");
+		autoMoving = true;
+		Pieces current_ = game.queryByXY(toX, toY);
+		/*if (!(pieces != null && game.getRule().canSelect(last))) {
+			return;
+		}*/
+		this.last = pieces;
+		this.current = current_;
+		last.setSelect(true);
+		current.setSelect(true);
+		/*if (!(game.getRule().canSelect(current))) {
+			return;
+		}*/
+//		if(!(game.getRule().canMove(last, current)))
+//			return;
+		mLocation.getLocaton(mLastPoint, last.x, last.y);
+		mLocation.getLocaton(mCurrentPoint, current.x, current.y);
+		game.getCurrentEmpty().x = last.x;
+		game.getCurrentEmpty().y = last.y;
+		game.resetUnCurrentEmpty();
+		invalidate();
+		startAnim();
+		autoMoving = false;
+	}
 }

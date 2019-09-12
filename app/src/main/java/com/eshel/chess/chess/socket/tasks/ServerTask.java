@@ -1,11 +1,12 @@
 package com.eshel.chess.chess.socket.tasks;
 
+import android.graphics.Point;
 import android.util.Log;
 
-import com.eshel.chess.chess.Util;
 import com.eshel.chess.chess.socket.Command;
 import com.eshel.chess.chess.socket.Config;
 import com.eshel.chess.chess.socket.ScanDeviceTool;
+import com.eshel.chess.chess.socket.WaitMoveCallback;
 import com.eshel.chess.chess.utils.Task;
 
 import java.io.BufferedReader;
@@ -24,7 +25,7 @@ import java.net.Socket;
  */
 public class ServerTask extends Task {
 
-	private static final String TAG = ServerTask.class.getSimpleName();
+	private static final String TAG = "GameTask_";
 	private ServerSocket mServerSocket;
 	private String name;
 	private GameTask.GameView mView;
@@ -52,7 +53,7 @@ public class ServerTask extends Task {
 
 					String command;
 
-					while ((command = br.readLine()) != null){
+					while ((command = br.readLine()) != null) {
 						Log.d(TAG, "command: " + command);
 						disposeCommand(bw, command);
 					}
@@ -70,7 +71,7 @@ public class ServerTask extends Task {
 	}
 
 	private void disposeCommand(BufferedWriter bw, String command) throws IOException {
-		if(command == null)
+		if (command == null)
 			return;
 
 		if (command.equals(Command.REQUEST_NAME)) {
@@ -79,6 +80,56 @@ public class ServerTask extends Task {
 			bw.flush();
 			mView.initRoomName(name);
 			mView.initGame(true);
+
+			//等待用户走棋
+			command = waitMove(mView);
+			bw.write(command);
+			bw.newLine();
+			bw.flush();
+		} else if(command.startsWith(Command.MOVE)){
+			command = command.substring(Command.MOVE.length());
+			String[] temp = command.split(",");
+			String from = temp[0];
+			String to = temp[1];
+
+			String[] from_ = from.split("-");
+			String[] to_ = to.split("-");
+
+			int fromX = Integer.valueOf(from_[0]);
+			int fromY = Integer.valueOf(from_[1]);
+
+			int toX = Integer.valueOf(to_[0]);
+			int toY = Integer.valueOf(to_[1]);
+
+			mView.movePieces(fromX, fromY, toX, toY);
+			command = waitMove(mView);
+			bw.write(command);
+			bw.newLine();
+			bw.flush();
 		}
+	}
+
+	public static String waitMove(GameTask.GameView view) {
+		Log.d(TAG, "wait user moving");
+		final Point fromPoint = new Point(-1, -1);
+		final Point toPoint = new Point(-1, -1);
+		final WaitMoveCallback callback = new WaitMoveCallback() {
+
+			@Override
+			public void move(int fromX, int fromY, int toX, int toY) {
+				fromPoint.set(fromX, fromY);
+				toPoint.set(toX, toY);
+			}
+		};
+		view.waitMove(callback);
+		while (true) {
+			if (fromPoint.x == -1 || toPoint.x == -1 || fromPoint.y == -1 || toPoint.y == -1) {
+				Thread.yield();
+			}else {
+				break;
+			}
+		}
+		Log.d(TAG, "user moved");
+		return Command.MOVE + fromPoint.x + "-" + fromPoint.y + "," + toPoint.x + "-" +toPoint.y;
 	}
 }

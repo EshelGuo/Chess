@@ -8,4 +8,6 @@ package com.eshel.chess.chess.socket;
 public class Command {
 
 	public static final String REQUEST_NAME = "i_want_request_server_name";
+
+	public static final String MOVE = "move:";
 }

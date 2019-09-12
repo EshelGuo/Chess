@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:theme="@style/FullscreenTheme"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
             android:name=".main.MainActivity">
             <intent-filter>
